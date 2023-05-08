@@ -1,9 +1,15 @@
 import { Plugin } from "obsidian";
+import SettingsManager from "./settings";
 
 export default class OneDriveSyncPlugin extends Plugin {
 	async onload() {
+		// Initialize Settings
+		const settings = await new SettingsManager(this).init();
+		console.log("Settings", settings.get()); // TODO: Remove
+
 		// TODO: Initialize things
-		// - Settings page
+		// - Read all files in vault and build index
+		// - Register file change events handler to update index
 		// - OneDrive related things
 		// - Event Store (Subscribe to events, publish events)
 
