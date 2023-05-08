@@ -1,5 +1,13 @@
 import { Stat } from "obsidian";
 
+// Load and save local storage
+declare module "obsidian" {
+	interface App {
+		loadLocalStorage(key: string): string | null;
+		saveLocalStorage(key: string, value: string | undefined): void;
+	}
+}
+
 // ================
 // Settings Related
 // ================
