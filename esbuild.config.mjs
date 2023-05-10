@@ -47,6 +47,7 @@ const context = await esbuild.context({
 	define: {
 		"process.env.ONEDRIVE_CLIENT_ID": `"${ONEDRIVE_CLIENT_ID}"`,
 		"process.env.ONEDRIVE_AUTHORITY": `"${ONEDRIVE_AUTHORITY}"`,
+		"process.env.NODE_ENV": prod ? `"production"` : `"development"`,
 	},
 });
 
