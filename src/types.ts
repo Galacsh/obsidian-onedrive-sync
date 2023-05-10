@@ -35,3 +35,25 @@ export type TSettings = {
 	index: TIndex;
 	ignore: string[];
 };
+
+// ============
+// Auth Related
+// ============
+
+export type TAuthStatus =
+	| "NOT_INITIALIZED"
+	| "NOT_AUTHENTICATED"
+	| "EXPIRED"
+	| "EXPIRED_REFRESHABLE"
+	| "AUTHENTICATED";
+
+// =====================
+// Plugin Events Related
+// =====================
+
+export type TEventType = "AUTH:SIGN_IN" | "AUTH:SIGN_OUT";
+export type TEventSubscriber = "AuthSettingsUI" | "AuthModal";
+export type TEventArgs = Parameters<TEventCallback>;
+
+// @ts-ignore
+export type TEventCallback = (...data) => unknown;

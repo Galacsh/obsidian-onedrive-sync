@@ -1,11 +1,18 @@
 import { Plugin } from "obsidian";
+
 import SettingsManager from "./settings";
+import { log, PluginEvents } from "./components";
 
 export default class OneDriveSyncPlugin extends Plugin {
+	events: PluginEvents;
+
 	async onload() {
+		// Initialize events
+		this.events = new PluginEvents();
+
 		// Initialize Settings
 		const settings = await new SettingsManager(this).init();
-		console.log("Settings", settings.get()); // TODO: Remove
+		log("Settings", settings.get()); // TODO: Remove
 
 		// TODO: Initialize things
 		// - Read all files in vault and build index
@@ -32,6 +39,7 @@ export default class OneDriveSyncPlugin extends Plugin {
 		this.addCloneToOneDriveCommand();
 		this.addCloneToLocalCommand();
 		this.addSyncCommand();
+		this.addTestCommand();
 	}
 
 	private addCloneToOneDriveCommand() {
@@ -67,6 +75,16 @@ export default class OneDriveSyncPlugin extends Plugin {
 		});
 	}
 
+	private addTestCommand() {
+		this.addCommand({
+			id: "test",
+			name: "Test",
+			callback: async () => {
+				this.events.fire("AUTH:SIGN_IN");
+			},
+		});
+	}
+
 	// ======================
 	// == Protocol Handler ==
 	// ======================
@@ -75,8 +93,7 @@ export default class OneDriveSyncPlugin extends Plugin {
 		this.registerObsidianProtocolHandler(
 			"onedrive-sync",
 			async ({ code }) => {
-				// TODO: Publish event to handle sign in
-				throw new Error("Not implemented");
+				this.events.fire("AUTH:SIGN_IN", code);
 			}
 		);
 	}
