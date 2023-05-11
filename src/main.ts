@@ -2,17 +2,18 @@ import { Plugin } from "obsidian";
 
 import SettingsManager from "./settings";
 import { log, PluginEvents } from "./components";
+import { ISettingsManager } from "./types";
 
 export default class OneDriveSyncPlugin extends Plugin {
 	events: PluginEvents;
+	settings: ISettingsManager;
 
 	async onload() {
 		// Initialize events
 		this.events = new PluginEvents();
 
 		// Initialize Settings
-		const settings = await new SettingsManager(this).init();
-		log("Settings", settings.get()); // TODO: Remove
+		this.settings = await new SettingsManager(this).init();
 
 		// TODO: Initialize things
 		// - Read all files in vault and build index
@@ -80,7 +81,10 @@ export default class OneDriveSyncPlugin extends Plugin {
 			id: "test",
 			name: "Test",
 			callback: async () => {
-				this.events.fire("AUTH:SIGN_IN");
+				log("Command will be fired in 5 seconds");
+				setTimeout(() => {
+					this.events.fire("AUTH:SIGN_IN");
+				}, 5000);
 			},
 		});
 	}

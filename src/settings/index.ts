@@ -1,4 +1,4 @@
-import { Plugin } from "obsidian";
+import OdsPlugin from "src/main";
 import {
 	TSettings,
 	ISettingsManager,
@@ -7,12 +7,12 @@ import {
 } from "../types";
 
 import DEFAULT_SETTINGS from "./default";
-import SettingsUI from "./ui";
+import SettingsUI from "./UI";
 
 export default class SettingsManager implements ISettingsManager {
 	private settings: TSettings;
 
-	constructor(public plugin: Plugin) {}
+	constructor(public plugin: OdsPlugin) {}
 
 	/**
 	 * 1. Load the settings.
@@ -21,7 +21,7 @@ export default class SettingsManager implements ISettingsManager {
 	async init(): Promise<ISettingsManager> {
 		this.settings = await this.load();
 
-		const tab = new SettingsUI(this.plugin, this);
+		const tab = new SettingsUI(this.plugin);
 		this.plugin.addSettingTab(tab);
 
 		return this;

@@ -1,10 +1,10 @@
 import { Modal } from "obsidian";
 
-import Plugin from "src/main";
+import OdsPlugin from "src/main";
 import { OneDriveSyncNotice as Notice } from "../../../components";
 
 export default class AuthModal extends Modal {
-	constructor(private plugin: Plugin) {
+	constructor(private plugin: OdsPlugin) {
 		super(plugin.app);
 	}
 

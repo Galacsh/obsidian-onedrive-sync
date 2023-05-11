@@ -1,6 +1,6 @@
 import { Setting } from "obsidian";
 
-import Plugin from "src/main";
+import OdsPlugin from "src/main";
 import AuthModal from "./modal";
 import { TAuthStatus } from "src/types";
 
@@ -10,7 +10,7 @@ export default class AuthSettingsUI {
 	private authOptionUI: Setting;
 	private authModal: AuthModal;
 
-	constructor(private container: HTMLElement, private plugin: Plugin) {}
+	constructor(private container: HTMLElement, private plugin: OdsPlugin) {}
 
 	async init() {
 		this.plugin.events.on(

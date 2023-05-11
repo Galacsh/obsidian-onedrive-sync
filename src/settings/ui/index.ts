@@ -1,10 +1,12 @@
 import { PluginSettingTab } from "obsidian";
 
-import Plugin from "src/main";
-import AuthSettingsUI from "./auth";
+import OdsPlugin from "src/main";
+import AuthUI from "./auth";
+import IgnoreFilesUI from "./ignore-files";
+import CloneSettingsUI from "./clone";
 
 export default class OneDriveSyncSettingsUI extends PluginSettingTab {
-	constructor(private plugin: Plugin) {
+	constructor(private plugin: OdsPlugin) {
 		super(plugin.app, plugin);
 	}
 
@@ -14,8 +16,8 @@ export default class OneDriveSyncSettingsUI extends PluginSettingTab {
 		containerEl.empty();
 		containerEl.createEl("h1", { text: "OneDrive Sync" });
 
-		await new AuthSettingsUI(containerEl.createDiv(), this.plugin).init();
-		// TODO: IgnoreFilesSettingsUI
-		// TODO: CloneOptionsUI
+		await new AuthUI(containerEl.createDiv(), this.plugin).init();
+		await new IgnoreFilesUI(containerEl.createDiv(), this.plugin).init();
+		await new CloneSettingsUI(containerEl.createDiv(), this.plugin).init();
 	}
 }
