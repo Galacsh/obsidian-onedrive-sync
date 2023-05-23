@@ -1,7 +1,6 @@
 import { Modal } from "obsidian";
 
 import OdsPlugin from "src/main";
-import { OneDriveSyncNotice as Notice } from "src/components";
 
 export default class CloneToLocalModal extends Modal {
 	private container: HTMLElement;
@@ -108,9 +107,7 @@ export default class CloneToLocalModal extends Modal {
 		});
 		button.style.marginRight = "1rem";
 		button.onclick = async () => {
-			new Notice("Starting", 1000);
-			// TODO: Implement
-			throw new Error("Not implemented");
+			await this.plugin.oneDrive.cloneToLocal();
 		};
 	}
 

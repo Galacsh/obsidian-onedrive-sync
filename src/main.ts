@@ -1,32 +1,63 @@
 import { Plugin } from "obsidian";
 
 import SettingsManager from "./settings";
+import AuthManager from "./bridge/auth";
+import OneDriveManager from "./bridge/onedrive";
+import VaultManager from "./bridge/vault";
+import { HANDLER_ACTION } from "./constants";
 import { log, PluginEvents } from "./components";
-import { ISettingsManager } from "./types";
+
+import {
+	IAuthManager,
+	IOneDriveManager,
+	ISettingsManager,
+	IVaultManager,
+} from "./types";
+import IgnoreHandler from "./bridge/ignore-handler";
 
 export default class OneDriveSyncPlugin extends Plugin {
 	events: PluginEvents;
 	settings: ISettingsManager;
+	ignoreHandler: IgnoreHandler;
+	auth: IAuthManager;
+	oneDrive: IOneDriveManager;
+	vault: IVaultManager;
 
 	async onload() {
-		// Initialize events
+		log("Initialize events");
 		this.events = new PluginEvents();
 
-		// Initialize Settings
-		this.settings = await new SettingsManager(this).init();
+		log("Initialize Settings");
+		this.settings = new SettingsManager(this);
+		await this.settings.init();
 
-		// TODO: Initialize things
-		// - Read all files in vault and build index
-		// - Register file change events handler to update index
-		// - OneDrive related things
-		// - Event Store (Subscribe to events, publish events)
+		log("Initialize Ignore Handler");
+		this.ignoreHandler = new IgnoreHandler(this);
 
+		log("Initialize Auth");
+		this.auth = new AuthManager(this);
+
+		log("Initialize OneDrive");
+		this.oneDrive = new OneDriveManager(this);
+
+		log("Initialize Vault Manager");
+		this.vault = new VaultManager(this);
+		this.vault.init().then(() => {});
+
+		log("Register commands");
 		this.registerCommands();
+
+		log("Register protocol handler");
 		this.registerSignInHandler();
+
+		log("Finished loading");
 	}
 
 	async onunload() {
-		// TODO: Clean up things
+		log("Unloading plugin");
+		this.events.clear();
+		log("Cleared events");
+		log("Unloaded plugin");
 	}
 
 	// ==============
@@ -37,30 +68,31 @@ export default class OneDriveSyncPlugin extends Plugin {
 	 * Registers all commands
 	 */
 	private registerCommands() {
-		this.addCloneToOneDriveCommand();
-		this.addCloneToLocalCommand();
+		this.addPullCommand();
+		this.addPushCommand();
 		this.addSyncCommand();
-		this.addTestCommand();
 	}
 
-	private addCloneToOneDriveCommand() {
+	private addPullCommand() {
 		this.addCommand({
-			id: "clone-to-onedrive",
-			name: "Clone Local vault to OneDrive vault",
+			id: "pull",
+			name: "Pull",
 			callback: async () => {
-				// TODO: Clone Local vault to OneDrive vault
-				throw new Error("Not implemented");
+				log("Start pulling");
+				await this.oneDrive.pull();
+				log("Finished pulling");
 			},
 		});
 	}
 
-	private addCloneToLocalCommand() {
+	private addPushCommand() {
 		this.addCommand({
-			id: "clone-to-local",
-			name: "Clone OneDrive vault to Local vault",
+			id: "push",
+			name: "Push",
 			callback: async () => {
-				// TODO: Clone OneDrive vault to Local vault
-				throw new Error("Not implemented");
+				log("Start pushing");
+				await this.oneDrive.push();
+				log("Finished pushing");
 			},
 		});
 	}
@@ -70,21 +102,9 @@ export default class OneDriveSyncPlugin extends Plugin {
 			id: "sync",
 			name: "Sync",
 			callback: async () => {
-				// TODO: Sync Local vault with OneDrive vault
-				throw new Error("Not implemented");
-			},
-		});
-	}
-
-	private addTestCommand() {
-		this.addCommand({
-			id: "test",
-			name: "Test",
-			callback: async () => {
-				log("Command will be fired in 5 seconds");
-				setTimeout(() => {
-					this.events.fire("AUTH:SIGN_IN");
-				}, 5000);
+				log("Start syncing");
+				await this.oneDrive.sync();
+				log("Finished syncing");
 			},
 		});
 	}
@@ -94,11 +114,9 @@ export default class OneDriveSyncPlugin extends Plugin {
 	// ======================
 
 	private registerSignInHandler() {
-		this.registerObsidianProtocolHandler(
-			"onedrive-sync",
-			async ({ code }) => {
-				this.events.fire("AUTH:SIGN_IN", code);
-			}
-		);
+		this.registerObsidianProtocolHandler(HANDLER_ACTION, ({ code }) => {
+			log("Received code from OneDrive");
+			this.events.fire("AUTH:SIGN_IN", code);
+		});
 	}
 }

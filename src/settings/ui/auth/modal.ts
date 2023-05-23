@@ -1,7 +1,7 @@
 import { Modal } from "obsidian";
 
 import OdsPlugin from "src/main";
-import { OneDriveSyncNotice as Notice } from "../../../components";
+import { OneDriveSyncNotice as Notice } from "src/components";
 
 export default class AuthModal extends Modal {
 	constructor(private plugin: OdsPlugin) {
@@ -71,7 +71,7 @@ export default class AuthModal extends Modal {
 		div.style.display = "flex";
 		div.style.justifyContent = "end";
 
-		const authLink = "https://github.com"; // TODO: Get auth link
+		const authLink = await this.plugin.auth.getAuthCodeUrl();
 		this.showLinkButton(div, authLink);
 		this.showCopyButton(div, authLink);
 	}

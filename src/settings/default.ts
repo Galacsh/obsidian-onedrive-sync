@@ -1,6 +1,8 @@
-const DEFAULT_SETTINGS = {
+import { TSettings } from "src/types";
+
+const DEFAULT_SETTINGS: TSettings = {
 	deltaLink: null,
-	index: {},
+	oneDriveIndex: {},
 	ignore: ["\\.obsidian\\/plugins\\/obsidian-onedrive-sync.*"],
 };
 

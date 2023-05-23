@@ -1,13 +1,13 @@
 import OdsPlugin from "src/main";
 import {
-	TSettings,
 	ISettingsManager,
+	TSettings,
 	TSettingsExtractor,
 	TSettingsUpdater,
 } from "../types";
 
 import DEFAULT_SETTINGS from "./default";
-import SettingsUI from "./UI";
+import SettingsUI from "./ui";
 
 export default class SettingsManager implements ISettingsManager {
 	private settings: TSettings;
@@ -18,13 +18,11 @@ export default class SettingsManager implements ISettingsManager {
 	 * 1. Load the settings.
 	 * 2. Add the settings tab.
 	 */
-	async init(): Promise<ISettingsManager> {
+	async init(): Promise<void> {
 		this.settings = await this.load();
 
 		const tab = new SettingsUI(this.plugin);
 		this.plugin.addSettingTab(tab);
-
-		return this;
 	}
 
 	/**
@@ -55,7 +53,9 @@ export default class SettingsManager implements ISettingsManager {
 		await this.plugin.saveData(this.settings);
 	}
 
-	// ==============
+	// =============
+	// == Private ==
+	// =============
 
 	/**
 	 * Loads the settings.

@@ -61,32 +61,36 @@ export default class IgnoreFilesSettingsUI {
 
 	/**
 	 * Creates a text area for inputting patterns.
+	 * Add a button to save the patterns.
 	 */
 	private showPatternInput(setting: Setting) {
-		setting.addTextArea(async (textArea) => {
-			const savedPatterns = this.plugin.settings.of(
-				(data) => data.ignore
-			);
+		let patterns = this.plugin.settings.of((data) => data.ignore);
 
+		setting.addTextArea((textArea) => {
 			textArea.inputEl.style.minHeight = "5rem";
 			textArea
 				.setPlaceholder(".*\\/\\.obsidian\\/?.*")
-				.setValue(savedPatterns.join("\n"))
+				.setValue(patterns.join("\n"))
 				.onChange(async (value) => {
 					// Pre-test the pattern, if it is invalid, show a warning
-					const patterns = value.split("\n").filter((p) => p !== "");
-					const isValid = isEveryPatternValid(patterns);
-
-					if (!isValid) {
-						new Notice("Invalid Regex", 1000);
-					} else {
-						new Notice("Valid Regex", 1000);
-						// Save the pattern
-						await this.plugin.settings.update((settings) => {
-							settings.ignore = patterns;
-						});
-					}
+					patterns = value.split("\n").filter((p) => p !== "");
 				});
+		});
+
+		setting.addButton((button) => {
+			button.setButtonText("Save").onClick(async () => {
+				const isValid = isEveryPatternValid(patterns);
+
+				if (isValid) {
+					await this.plugin.settings.update((settings) => {
+						settings.ignore = patterns;
+					});
+					this.plugin.ignoreHandler.updateIgnorePatterns();
+					new Notice("Valid Regex, saved.", 1000);
+				} else {
+					new Notice("Invalid Regex, not saved.", 1000);
+				}
+			});
 		});
 	}
 }

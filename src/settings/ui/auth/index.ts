@@ -2,7 +2,8 @@ import { Setting } from "obsidian";
 
 import OdsPlugin from "src/main";
 import AuthModal from "./modal";
-import { TAuthStatus } from "src/types";
+import { TAuthStatus } from "src/onedrive/auth/types";
+import { URI_CONSENT_MANAGE } from "../../../onedrive/client/constants";
 
 const STATUS_PREFIX = "Status: ";
 
@@ -13,14 +14,23 @@ export default class AuthSettingsUI {
 	constructor(private container: HTMLElement, private plugin: OdsPlugin) {}
 
 	async init() {
+		this.registerEventHandlers();
+
+		this.showTitle();
+		await this.initAuthOption();
+	}
+
+	private registerEventHandlers() {
 		this.plugin.events.on(
 			"AUTH:SIGN_IN",
 			"AuthSettingsUI",
 			this.onSignIn.bind(this)
 		);
-
-		this.showTitle();
-		await this.initAuthOption();
+		this.plugin.events.on(
+			"AUTH:SIGN_OUT",
+			"AuthSettingsUI",
+			this.onSignOut.bind(this)
+		);
 	}
 
 	/**
@@ -72,7 +82,7 @@ export default class AuthSettingsUI {
 	 * on the name of the setting component.
 	 */
 	private async loadStatus() {
-		const status: TAuthStatus = "NOT_INITIALIZED"; // TODO: Load from settings
+		const status: TAuthStatus = await this.plugin.auth.getAuthStatus();
 		this.setStatus(status);
 	}
 
@@ -119,7 +129,7 @@ export default class AuthSettingsUI {
 		});
 		description.createEl("a", {
 			text: "clicking here",
-			href: "https://microsoft.com/consent",
+			href: URI_CONSENT_MANAGE,
 		});
 		description.createSpan({ text: "." });
 	}
@@ -141,8 +151,7 @@ export default class AuthSettingsUI {
 	private showSignOutButton() {
 		this.authOptionUI.addButton((button) => {
 			button.setButtonText("Sign Out").onClick(async () => {
-				// TODO: Sign Out
-				this.onSignOut();
+				this.plugin.events.fire("AUTH:SIGN_OUT");
 			});
 		});
 	}
