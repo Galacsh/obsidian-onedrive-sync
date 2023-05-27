@@ -27,15 +27,15 @@ export default class OneDriveSyncPlugin extends Plugin {
 		log("Initialize events");
 		this.events = new PluginEvents();
 
+		log("Initialize Auth");
+		this.auth = new AuthManager(this);
+
 		log("Initialize Settings");
 		this.settings = new SettingsManager(this);
 		await this.settings.init();
 
 		log("Initialize Ignore Handler");
 		this.ignoreHandler = new IgnoreHandler(this);
-
-		log("Initialize Auth");
-		this.auth = new AuthManager(this);
 
 		log("Initialize OneDrive");
 		this.oneDrive = new OneDriveManager(this);
@@ -50,7 +50,7 @@ export default class OneDriveSyncPlugin extends Plugin {
 		log("Register protocol handler");
 		this.registerSignInHandler();
 
-		log("Finished loading");
+		console.log("Loaded 'OneDrive Sync'");
 	}
 
 	async onunload() {
