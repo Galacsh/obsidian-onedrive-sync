@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-onedrive-sync",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "This is OneDrive sync plugin for Obsidian. Useful for synchronizing between multiple devices, but not smart.",
 	"main": "main.js",
 	"scripts": {
