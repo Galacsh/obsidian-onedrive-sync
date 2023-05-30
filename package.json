@@ -12,7 +12,7 @@
 	"author": "Galacsh <galacsh.dev@gmail.com>",
 	"license": "MIT",
 	"dependencies": {
-		"@azure/msal-node": "^1.17.2",
+		"msal-node-browserify": "file:libs/msal",
 		"@supercharge/promise-pool": "^2.4.0"
 	},
 	"devDependencies": {
