@@ -1,7 +1,7 @@
 {
-	"name": "onedrive-sync",
+	"name": "obsidian-onedrive-sync",
 	"version": "0.0.2",
-	"description": "This is another sync plugin for Obsidian, which syncs your vault to OneDrive.",
+	"description": "This is OneDrive sync plugin for Obsidian. Useful for synchronizing between multiple devices, but not smart.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
