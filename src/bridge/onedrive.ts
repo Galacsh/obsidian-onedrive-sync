@@ -65,7 +65,11 @@ export default class OneDriveManager implements IOneDriveManager {
 			});
 
 			this.busy = false;
-			new Notice("Finished cloning");
+			new Notice(
+				"Finished cloning. " +
+					"Reload Obsidian if there are Obsidian configuration files. " +
+					"If you have any plugins, you may need to enable them manually."
+			);
 
 			this.plugin.vault.clearIndex();
 			await this.plugin.vault.buildIndex();
@@ -97,7 +101,7 @@ export default class OneDriveManager implements IOneDriveManager {
 			});
 
 			this.busy = false;
-			new Notice("Finished cloning");
+			new Notice("Finished cloning. Check your OneDrive folder.");
 
 			this.plugin.vault.clearIndex();
 			await this.plugin.vault.buildIndex();
@@ -160,7 +164,7 @@ export default class OneDriveManager implements IOneDriveManager {
 	// ==============
 
 	private async ifAuth(func: () => Promise<void>) {
-		const status = await this.plugin.auth.getAuthStatus();
+		const status = this.plugin.auth.getAuthStatus();
 		switch (status) {
 			case "NOT_INITIALIZED":
 			case "NOT_AUTHENTICATED":

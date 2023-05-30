@@ -1,5 +1,8 @@
-import { ILoggerCallback, LogLevel } from "@azure/msal-common";
-import { NodeAuthOptions } from "@azure/msal-node";
+import {
+	ILoggerCallback,
+	LogLevel,
+	NodeAuthOptions,
+} from "msal-node-browserify";
 
 import OdsPlugin from "src/main";
 import AuthProvider from "src/onedrive/auth";
@@ -31,7 +34,7 @@ export default class AuthManager implements IAuthManager {
 			},
 		};
 
-		const logger: ILoggerCallback = (level, message, containsPii) => {
+		const logger: ILoggerCallback = (level, message) => {
 			if (level === LogLevel.Info) console.log(message);
 			else if (level === LogLevel.Error) console.error(message);
 		};
@@ -54,8 +57,8 @@ export default class AuthManager implements IAuthManager {
 		return await this.auth.getAuthCodeUrl();
 	}
 
-	async getAuthStatus(): Promise<TAuthStatus> {
-		return await this.auth.getAuthStatus();
+	getAuthStatus(): TAuthStatus {
+		return this.auth.getAuthStatus();
 	}
 
 	private registerEventHandlers() {
@@ -66,7 +69,7 @@ export default class AuthManager implements IAuthManager {
 
 		// Sign out
 		this.plugin.events.on("AUTH:SIGN_OUT", "AuthManager", async () => {
-			await this.auth.signOut();
+			this.auth.signOut();
 		});
 	}
 }

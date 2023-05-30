@@ -67,7 +67,7 @@ export default class AuthSettingsUI {
 		this.showSignInButton();
 		this.showSignOutButton();
 
-		await this.loadStatus();
+		this.loadStatus();
 	}
 
 	/**
@@ -81,8 +81,8 @@ export default class AuthSettingsUI {
 	 * Load and show the current auth status
 	 * on the name of the setting component.
 	 */
-	private async loadStatus() {
-		const status: TAuthStatus = await this.plugin.auth.getAuthStatus();
+	private loadStatus() {
+		const status = this.plugin.auth.getAuthStatus();
 		this.setStatus(status);
 	}
 

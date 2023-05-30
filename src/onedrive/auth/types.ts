@@ -10,12 +10,6 @@ export type TAuth = {
 	expiresAt?: number;
 };
 
-export type TPkce = {
-	verifier: string;
-	challenge: string;
-	challengeMethod: string;
-};
-
 export type TAuthResponse = {
 	access_token: string;
 	refresh_token?: string;

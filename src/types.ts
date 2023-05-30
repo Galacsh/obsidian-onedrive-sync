@@ -70,7 +70,7 @@ export type TSettings = {
 export interface IAuthManager {
 	getProvider: () => AuthProvider;
 	getAuthCodeUrl: () => Promise<string>;
-	getAuthStatus: () => Promise<TAuthStatus>;
+	getAuthStatus: () => TAuthStatus;
 }
 
 // ================

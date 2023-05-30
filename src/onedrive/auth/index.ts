@@ -5,19 +5,13 @@ import {
 	CryptoProvider,
 	LogLevel,
 	NodeAuthOptions,
+	ILoggerCallback,
 	PublicClientApplication,
-} from "@azure/msal-node";
-import { ILoggerCallback } from "@azure/msal-common";
+} from "msal-node-browserify";
 
 import { AUTH_CONFIG } from "./constants";
 
-import {
-	TAuth,
-	TAuthResponse,
-	TAuthStatus,
-	TAuthStorage,
-	TPkce,
-} from "./types";
+import { TAuth, TAuthResponse, TAuthStatus, TAuthStorage } from "./types";
 
 /**
  * Handles authentication.
@@ -54,8 +48,8 @@ export default class AuthProvider {
 	 * @returns Auth status.
 	 * @see https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/token-lifetimes.md
 	 */
-	async getAuthStatus(): Promise<TAuthStatus> {
-		const auth = await this.getStoredAuth();
+	getAuthStatus(): TAuthStatus {
+		const auth = this.getStoredAuth();
 
 		// No auth stored
 		if (!auth || auth.expiresAt == null) {
@@ -88,19 +82,16 @@ export default class AuthProvider {
 	async getAuthCodeUrl() {
 		// Create PKCE Codes before starting the authorization flow
 		const crypto = new CryptoProvider();
-		const pkce: TPkce = Object.assign(
-			{ challengeMethod: AUTH_CONFIG.challengeMethod },
-			await crypto.generatePkceCodes()
-		);
+		const pkce = await crypto.generatePkceCodes();
 
 		// Store verifier for further use
-		await this.updateVerifier(pkce.verifier);
+		this.updateVerifier(pkce.verifier);
 
 		const params = {
 			redirectUri: this.redirectUri,
 			scopes: AUTH_CONFIG.scopes,
 			codeChallenge: pkce.challenge, // PKCE Code Challenge
-			codeChallengeMethod: pkce.challengeMethod, // PKCE Code Challenge Method
+			codeChallengeMethod: AUTH_CONFIG.challengeMethod, // PKCE Code Challenge Method
 		} as AuthorizationUrlRequest;
 
 		return await this.pca.getAuthCodeUrl(params);
@@ -119,7 +110,7 @@ export default class AuthProvider {
 			return await this.acquireTokenByCode(code);
 		}
 
-		const auth = await this.getStoredAuth();
+		const auth = this.getStoredAuth();
 
 		if (auth == null || auth.expiresAt == null) {
 			throw new AuthError(
@@ -141,7 +132,7 @@ export default class AuthProvider {
 	 * @throws {AuthError} If no stored verifier found.
 	 */
 	private async acquireTokenByCode(code: string) {
-		const verifier = await this.getStoredVerifier();
+		const verifier = this.getStoredVerifier();
 		if (!verifier) {
 			throw new AuthError(
 				"NO_VERIFIER",
@@ -167,7 +158,7 @@ export default class AuthProvider {
 				})
 			);
 
-			await this.updateStoredAuth(response);
+			this.updateStoredAuth(response);
 			return response.access_token;
 		} catch (e) {
 			throw new AuthError(
@@ -183,7 +174,7 @@ export default class AuthProvider {
 	 * @returns The 'access_token'.
 	 */
 	private async acquireTokenByRefreshToken() {
-		const auth = await this.getStoredAuth();
+		const auth = this.getStoredAuth();
 
 		if (auth?.refreshToken) {
 			try {
@@ -201,7 +192,7 @@ export default class AuthProvider {
 						}).toString(),
 					})
 				);
-				await this.updateStoredAuth(response);
+				this.updateStoredAuth(response);
 				return response.access_token;
 			} catch (e) {
 				throw new AuthError(
@@ -220,8 +211,8 @@ export default class AuthProvider {
 	/**
 	 * Sign out by clearing stored auth.
 	 */
-	async signOut() {
-		await this.clearAuth();
+	signOut() {
+		this.clearAuth();
 	}
 
 	/**
@@ -229,8 +220,8 @@ export default class AuthProvider {
 	 *
 	 * @returns The stored auth
 	 */
-	private async getStoredAuth() {
-		const auth = await this.storage.load();
+	private getStoredAuth() {
+		const auth = this.storage.load();
 		return auth ? (JSON.parse(auth) as TAuth) : {};
 	}
 
@@ -239,8 +230,8 @@ export default class AuthProvider {
 	 *
 	 * @param response The response of the auth request.
 	 */
-	private async updateStoredAuth(response: TAuthResponse) {
-		const stored = await this.getStoredAuth();
+	private updateStoredAuth(response: TAuthResponse) {
+		const stored = this.getStoredAuth();
 
 		const auth = {
 			accessToken: response.access_token,
@@ -252,7 +243,7 @@ export default class AuthProvider {
 			expiresAt: Date.now() + response.expires_in * 1000,
 		} as TAuth;
 
-		await this.storage.save(JSON.stringify(auth));
+		this.storage.save(JSON.stringify(auth));
 	}
 
 	/**
@@ -260,7 +251,7 @@ export default class AuthProvider {
 	 *
 	 * @param verifier The verifier to update.
 	 */
-	private async updateVerifier(verifier: string) {
+	private updateVerifier(verifier: string) {
 		if (!verifier) {
 			throw new AuthError(
 				"INVALID_VERIFIER",
@@ -268,9 +259,9 @@ export default class AuthProvider {
 			);
 		}
 
-		const stored = await this.getStoredAuth();
+		const stored = this.getStoredAuth();
 		const updated = Object.assign({}, stored, { verifier }) as TAuth;
-		await this.storage.save(JSON.stringify(updated));
+		this.storage.save(JSON.stringify(updated));
 	}
 
 	/**
@@ -278,15 +269,15 @@ export default class AuthProvider {
 	 *
 	 * @returns Stored verifier.
 	 */
-	private async getStoredVerifier() {
-		const stored = await this.getStoredAuth();
+	private getStoredVerifier() {
+		const stored = this.getStoredAuth();
 		return stored.verifier;
 	}
 
 	/**
 	 * Clear stored auth.
 	 */
-	private async clearAuth() {
-		await this.storage.save(undefined);
+	private clearAuth() {
+		this.storage.save(undefined);
 	}
 }
