@@ -1,0 +1,11 @@
+# IDE
+.idea/
+.vscode/
+
+# Build
+main.js
+main.d.ts
+
+# Dependencies
+node_modules/
+package-lock.json

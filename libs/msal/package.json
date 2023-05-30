@@ -1,0 +1,41 @@
+{
+	"name": "msal-node-browserify",
+	"description": "@azure/msal-node, wrapped with browserify",
+	"version": "1.0.0",
+	"scripts": {
+		"start": "npm run dev",
+		"dev": "webpack --mode development --watch",
+		"build": "webpack --mode production"
+	},
+	"author": {
+		"name": "Galacsh"
+	},
+	"browser": {
+		"path": "path-browserify",
+		"process": "process/browser",
+		"stream": "stream-browserify",
+		"crypto": "crypto-browserify",
+		"url": "url/"
+	},
+	"main": "main.js",
+	"types": "main.d.ts",
+	"devDependencies": {
+		"@azure/msal-node": "^1.17.2",
+		"buffer": "^6.0.3",
+		"crypto-browserify": "^3.12.0",
+		"https-browserify": "^1.0.0",
+		"path-browserify": "^1.0.1",
+		"process": "^0.11.10",
+		"stream-browserify": "^3.0.0",
+		"stream-http": "^3.2.0",
+		"url": "^0.11.0",
+		"util": "^0.12.5",
+		"builtin-modules": "^3.3.0",
+		"ts-loader": "^9.4.3",
+		"ts-node": "^10.9.1",
+		"tslib": "^2.5.2",
+		"typescript": "^5.0.4",
+		"webpack": "^5.84.1",
+		"webpack-cli": "^5.1.1"
+	}
+}
