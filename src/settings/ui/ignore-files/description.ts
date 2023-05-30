@@ -44,14 +44,14 @@ export default class IgnoreFilesDescription {
 		const input = example.createEl("li");
 		input.createSpan({ text: "Pattern : " });
 		input.createEl("code", {
-			text: ".*\\/\\.obsidian\\/?.*",
+			text: "\\.obsidian",
 		});
 
 		// Output
 		const output = example.createEl("li");
 		output.createSpan({ text: "→ " });
 		output.createEl("code", {
-			text: 'new RegExp("^.*\\\\/\\\\.obsidian\\\\/?.*$")',
+			text: 'new RegExp("\\\\.obsidian")',
 		});
 	}
 }
