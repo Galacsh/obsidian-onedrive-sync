@@ -43,6 +43,7 @@ const context = await esbuild.context({
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
+	minify: prod,
 	outfile: "main.js",
 	define: {
 		"process.env.ONEDRIVE_CLIENT_ID": `"${ONEDRIVE_CLIENT_ID}"`,
