@@ -6,7 +6,7 @@
  */
 export const decode = (base64: string | null) => {
 	if (!base64) return null;
-	return Buffer.from(base64, "base64").toString("utf8");
+	return atob(base64);
 };
 
 /**
@@ -17,5 +17,5 @@ export const decode = (base64: string | null) => {
  */
 export const encode = (str: string | null) => {
 	if (!str) return null;
-	return Buffer.from(str, "utf8").toString("base64");
+	return btoa(str);
 };
