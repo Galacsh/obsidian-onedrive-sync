@@ -45,6 +45,7 @@ export default class OneDriveManager implements IOneDriveManager {
 
 			// Clear the local vault
 			await this.plugin.vault.clear();
+			await this.plugin.vault.clearIndex();
 
 			// Clear the OneDrive index
 			await this.plugin.settings.update((s) => {
@@ -71,7 +72,6 @@ export default class OneDriveManager implements IOneDriveManager {
 					"If you have any plugins, you may need to enable them manually."
 			);
 
-			this.plugin.vault.clearIndex();
 			await this.plugin.vault.buildIndex();
 		});
 	}
@@ -86,6 +86,8 @@ export default class OneDriveManager implements IOneDriveManager {
 
 			// Clear the OneDrive vault
 			await this.clearOneDrive();
+			// Clear the index
+			this.plugin.vault.clearIndex();
 
 			// Get all the files in the local vault
 			const allFiles = await this.plugin.vault.getAllFiles();
@@ -103,7 +105,6 @@ export default class OneDriveManager implements IOneDriveManager {
 			this.busy = false;
 			new Notice("Finished cloning. Check your OneDrive folder.");
 
-			this.plugin.vault.clearIndex();
 			await this.plugin.vault.buildIndex();
 		});
 	}
